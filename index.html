@@ -1,97 +1,152 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ตารางเรียน – Semester Gasal</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Inter:wght@400;500&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#111111">
+<title>Jadwal Kuliah — Semester Gasal</title>
 <style>
-:root{
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  --bg:#f1f0ee; --red:#d70f18; --faint:rgba(215,15,24,.28);
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){--bg:#141313;--red:#ff4a50;--faint:rgba(255,74,80,.32);color-scheme:dark}
-}
-:root[data-theme="dark"]{--bg:#141313;--red:#ff4a50;--faint:rgba(255,74,80,.32);color-scheme:dark}
-html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-*,*::before,*::after{box-sizing:inherit}
-body{margin:0;min-height:100%;background-color:var(--bg);color:var(--red);
-  font-family:"Inter","Noto Sans Thai",system-ui,sans-serif;line-height:1.4;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 40px;display:grid;grid-template-columns:1fr;gap:22px}
-h1{font-family:"Inter Tight","Inter",sans-serif;font-weight:500;font-size:min(19vw,7rem);line-height:.88;letter-spacing:-.055em;margin:0}
-.meta{margin:16px 0 0;font-size:.85rem;max-width:30ch}
-.body{min-width:0}
-.tabs{display:flex;flex-wrap:wrap;margin:0 0 18px 1px}
-.tab{font:inherit;font-size:.8rem;font-weight:500;text-transform:uppercase;letter-spacing:.02em;color:var(--red);background:transparent;border:1px solid var(--red);margin:0 0 -1px -1px;padding:8px 13px;cursor:pointer;border-radius:0}
-.tab[aria-selected="true"]{background:var(--red);color:var(--bg)}
-.tab:focus-visible{outline:2px solid var(--red);outline-offset:3px}
-
-.day{border-top:1px solid var(--red);padding:8px 0 16px}
-.day h2{margin:0 0 6px;font-family:"Inter Tight","Inter",sans-serif;font-weight:500;font-size:2.1rem;line-height:1.05;letter-spacing:-.04em;text-transform:uppercase}
-.day sup{font-family:"Inter","Noto Sans Thai",sans-serif;font-size:.8rem;font-weight:400;letter-spacing:0;text-transform:none;margin-left:3px;vertical-align:top;position:relative;top:.15em}
-.item{display:grid;grid-template-columns:22px 1fr;padding:8px 0}
-.ix{font-size:.6rem;padding-top:4px}
-.txt{display:flex;flex-direction:column;text-align:right;font-size:.95rem}
-.txt b{font-weight:500;font-size:1.1rem;line-height:1.25}
-.txt .lec{font-size:.8rem;opacity:.8}
-.free{text-align:right;padding:8px 0}
-
-.week{display:none}
-.days{display:grid;grid-template-columns:46px repeat(5,1fr);gap:0}
-.dh{padding:8px 6px;font-weight:500;text-transform:uppercase;font-size:.8rem;border-bottom:1px solid var(--red);border-top:1px solid var(--red)}
-.dh small{display:block;font-weight:400;font-size:.7rem;text-transform:none;opacity:.8}
-.dh.today{background:var(--red);color:var(--bg)}
-.axis{position:relative;height:600px}
-.axis span{position:absolute;left:0;font-size:.65rem;transform:translateY(-50%)}
-.col{position:relative;height:600px;border-left:1px solid var(--faint);background:repeating-linear-gradient(to bottom,transparent 0,transparent 59px,var(--faint) 59px,var(--faint) 60px)}
-.col.empty::after{content:"ว่างทั้งวัน";position:absolute;top:40%;left:0;right:0;text-align:center;font-size:.85rem}
-.ev{position:absolute;left:3px;right:3px;border:1px solid var(--red);background:var(--bg);padding:4px 6px;overflow:hidden;font-size:.7rem;line-height:1.3}
-.ev b{display:block;font-weight:500;font-size:.78rem}
-
-.foot{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-top:1px solid var(--red);padding-top:14px;margin-top:10px}
-.big{font-family:"Inter Tight","Inter",sans-serif;font-weight:500;font-size:min(22vw,8rem);line-height:.85;letter-spacing:-.055em}
-.fm{text-align:right;font-family:"Inter Tight","Inter",sans-serif;font-weight:500;font-size:clamp(1.1rem,4.5vw,1.6rem);line-height:1.1;letter-spacing:-.03em}
-
-body[data-view="day"] .day:not(.sel){display:none}
-@media (min-width:900px){
-  .wrap{grid-template-columns:5fr 7fr;column-gap:28px;padding-top:40px}
-  h1{font-size:6rem}
-  .foot{grid-column:1/-1}
-  body[data-view="all"] .body{grid-column:1/-1}
-  body[data-view="all"] .week{display:block}
-  body[data-view="all"] .list{display:none}
-}
+:root{color-scheme:dark;--bg:#101010;--panel:#171717;--panel2:#1d1d1d;--text:#f4f0ec;--muted:#aaa39e;--red:#ff454f;--line:rgba(255,69,79,.34);--soft:rgba(255,69,79,.09);--green:#b7f7c6;--shadow:0 22px 70px rgba(0,0,0,.22)}
+:root[data-theme="light"]{color-scheme:light;--bg:#f3f0ed;--panel:#fffdfa;--panel2:#f7f1ed;--text:#171515;--muted:#68605d;--red:#d71927;--line:rgba(215,25,39,.3);--soft:rgba(215,25,39,.07);--green:#216b3b;--shadow:0 20px 55px rgba(35,20,20,.08)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",sans-serif;line-height:1.45;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.15;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:70px 70px;mask-image:linear-gradient(to bottom,black,transparent 75%);z-index:-1}
+button{font:inherit}
+button:focus-visible{outline:2px solid var(--red);outline-offset:4px}
+.shell{max-width:1440px;margin:auto;padding:clamp(18px,3vw,42px);padding-bottom:42px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:clamp(24px,4vw,56px);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.brandmark{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text)}
+.mark{width:12px;height:12px;background:var(--red);display:inline-block;box-shadow:0 0 20px var(--line);transform:rotate(45deg)}
+.topright{display:flex;align-items:center;gap:10px}
+.pill{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);white-space:nowrap}
+.pill .live{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.8s infinite}
+.icon-btn{display:inline-grid;place-items:center;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:var(--panel);color:var(--text);cursor:pointer;transition:transform .2s,border-color .2s,background .2s}
+.icon-btn:hover{transform:translateY(-2px);border-color:var(--red)}
+.icon-btn svg{width:18px;height:18px}
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:clamp(26px,5vw,80px);align-items:end;margin-bottom:clamp(34px,5vw,70px)}
+.eyebrow{display:flex;align-items:center;gap:10px;color:var(--red);font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:18px}
+.eyebrow:before{content:"";width:32px;height:1px;background:var(--red)}
+h1{font-size:clamp(4.5rem,12vw,11.8rem);line-height:.76;letter-spacing:-.095em;font-weight:850;margin:0;text-transform:uppercase}
+h1 span{display:block;color:var(--red)}
+.meta{margin:26px 0 0;color:var(--muted);font-size:.9rem;line-height:1.7}
+.meta strong{color:var(--text);font-weight:650}
+.hero-card{position:relative;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,var(--panel),var(--soft));padding:clamp(20px,3vw,34px);min-height:220px;display:flex;flex-direction:column;justify-content:space-between;isolation:isolate}
+.hero-card:after{content:"";position:absolute;width:220px;height:220px;border:1px solid var(--line);border-radius:50%;right:-72px;top:-82px;box-shadow:0 0 0 25px var(--soft),0 0 0 52px rgba(255,69,79,.035);z-index:-1;animation:orbit 18s linear infinite}
+.hero-card-top{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase}
+.hero-total{font-size:clamp(4rem,8vw,7rem);font-weight:850;letter-spacing:-.09em;line-height:.9;margin:28px 0 12px}
+.hero-total em{font-size:.22em;letter-spacing:.02em;font-style:normal;color:var(--red);vertical-align:top;margin-left:8px}
+.hero-note{display:flex;justify-content:space-between;align-items:end;gap:16px;font-size:.83rem;color:var(--muted)}
+.hero-note strong{color:var(--text);font-weight:600}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;border-top:1px solid var(--line);padding-top:18px;margin-bottom:18px}
+.section-kicker{color:var(--red);font-size:.7rem;letter-spacing:.18em;font-weight:800;text-transform:uppercase;margin-bottom:5px}
+h2{font-size:clamp(1.8rem,4vw,3.3rem);letter-spacing:-.065em;line-height:1;margin:0;font-weight:750}
+.view-note{color:var(--muted);font-size:.78rem;text-align:right}
+.controls{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 22px}
+.tab{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:transparent;color:var(--text);padding:10px 14px;cursor:pointer;font-size:.78rem;letter-spacing:.02em;transition:background .22s,color .22s,border-color .22s,transform .22s}
+.tab:hover{transform:translateY(-2px);border-color:var(--red)}
+.tab[aria-selected="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.tab .num{font-size:.65rem;opacity:.75}
+.tab.week-tab{margin-left:auto}
+.day-view{animation:rise .45s both}
+.day-banner{display:flex;justify-content:space-between;align-items:center;gap:18px;border-bottom:1px solid var(--line);padding:0 0 15px;margin-bottom:14px}
+.day-name{font-size:clamp(1.7rem,4vw,3rem);font-weight:800;letter-spacing:-.07em;text-transform:uppercase}
+.day-name small{font-size:.34em;letter-spacing:0;font-weight:500;color:var(--muted);vertical-align:top;margin-left:8px}
+.day-count{font-size:.72rem;color:var(--muted);text-align:right}
+.course-list{display:grid;gap:10px}
+.course{display:grid;grid-template-columns:minmax(105px,.24fr) minmax(0,1fr) auto;align-items:center;gap:18px;border:1px solid var(--line);background:var(--panel);padding:clamp(15px,2.2vw,24px);position:relative;overflow:hidden;transition:transform .22s,border-color .22s,background .22s;animation:rise .5s both;animation-delay:calc(var(--i,0)*65ms)}
+.course:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--red);transform:scaleY(.25);transform-origin:center;transition:transform .25s}
+.course:hover{transform:translateY(-3px);border-color:var(--red);background:var(--panel2)}
+.course:hover:before{transform:scaleY(1)}
+.time{font-size:1.02rem;font-weight:800;letter-spacing:-.035em;white-space:nowrap}
+.time small{display:block;color:var(--muted);font-size:.7rem;font-weight:500;letter-spacing:0;margin-top:4px}
+.course-main{min-width:0}
+.course-title{font-size:clamp(1rem,2vw,1.35rem);font-weight:750;letter-spacing:-.035em;line-height:1.2;margin-bottom:8px}
+.course-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:.72rem;color:var(--muted)}
+.tag{border:1px solid var(--line);padding:4px 7px;color:var(--text);font-size:.65rem;letter-spacing:.06em}
+.lecturer{font-size:.78rem;color:var(--muted);margin-top:8px;line-height:1.45}
+.course-icon{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);color:var(--red);border-radius:50%;flex-shrink:0}
+.course-icon svg{width:21px;height:21px}
+.empty-state{border:1px dashed var(--line);padding:34px;text-align:center;color:var(--muted);background:var(--panel)}
+.empty-state strong{display:block;font-size:1.1rem;color:var(--text);margin:8px 0}
+.week-wrap{display:none;overflow-x:auto;padding-bottom:8px}
+.week-grid{min-width:850px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.week-day{min-width:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
+.week-day-head{padding:16px 13px;border-bottom:1px solid var(--line);min-height:76px}
+.week-day-head strong{display:block;font-size:.95rem;text-transform:uppercase}
+.week-day-head small{display:block;color:var(--muted);font-size:.72rem;margin-top:4px}
+.week-day.is-today .week-day-head{background:var(--red);color:white}
+.week-day.is-today .week-day-head small{color:rgba(255,255,255,.8)}
+.week-items{padding:9px;display:grid;align-content:start;gap:9px;min-height:160px}
+.week-course{border:1px solid var(--line);padding:11px 10px;background:var(--bg);transition:transform .2s,border-color .2s}
+.week-course:hover{transform:translateY(-2px);border-color:var(--red)}
+.week-course time{font-size:.7rem;color:var(--red);font-weight:800}
+.week-course strong{display:block;font-size:.8rem;line-height:1.25;margin:7px 0}
+.week-course small{display:block;font-size:.66rem;color:var(--muted);line-height:1.4;overflow-wrap:anywhere}
+.week-empty{font-size:.75rem;color:var(--muted);padding:14px 4px}
+.footer{margin-top:clamp(40px,7vw,90px);padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:end;gap:20px}
+.footer-mark{font-size:clamp(2.5rem,8vw,7rem);font-weight:850;letter-spacing:-.09em;line-height:.8}
+.footer-mark span{color:var(--red)}
+.footer-right{text-align:right;color:var(--muted);font-size:.78rem}
+.footer-right strong{display:block;color:var(--text);font-size:1rem;margin-bottom:5px}
+.smallprint{display:flex;justify-content:space-between;gap:16px;margin-top:32px;padding-top:12px;border-top:1px solid var(--line);font-size:.65rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,69,79,.35)}50%{box-shadow:0 0 0 7px rgba(255,69,79,0)}}
+@keyframes orbit{to{transform:rotate(360deg)}}
+@media(min-width:1000px){.hero{grid-template-columns:1.1fr .9fr}.course-list{grid-template-columns:1fr 1fr}.course{grid-template-columns:100px minmax(0,1fr) auto;gap:14px}.course-title{font-size:1.1rem}.course-icon{width:38px;height:38px}}
+@media(max-width:700px){.shell{padding:17px;padding-bottom:30px}.topbar{margin-bottom:34px}.pill{font-size:.62rem;padding:7px 9px}.hero{grid-template-columns:1fr;gap:25px;margin-bottom:40px}h1{font-size:clamp(4.6rem,19vw,8rem)}.meta{font-size:.8rem;margin-top:20px}.hero-card{min-height:190px}.hero-total{font-size:5.4rem}.section-head{align-items:start}.view-note{max-width:125px;font-size:.68rem}.tab{padding:9px 11px;font-size:.7rem}.tab.week-tab{margin-left:0}.controls{gap:6px}.course-list{gap:8px}.course{grid-template-columns:88px minmax(0,1fr);gap:12px;padding:15px 12px}.course-icon{display:none}.time{font-size:.9rem}.course-title{font-size:1rem}.course-meta{font-size:.68rem}.lecturer{font-size:.72rem}.footer{align-items:start}.footer-mark{font-size:clamp(2.7rem,13vw,5rem)}.footer-right{font-size:.7rem}.smallprint{font-size:.58rem}}
+@media(prefers-reduced-motion:reduce){*,*::before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <header>
-    <h1>JADWAL<br>KULIAH</h1>
-    <p class="meta">Semester Gasal<br>Universitas Nahdlatul Ulama Yogyakarta<br>HAIKA AWAE · 245551084</p>
+<div class="shell">
+  <nav class="topbar" aria-label="Site information">
+    <div class="brandmark"><span class="mark"></span> UNU Yogyakarta <span style="color:var(--red)">/</span> Student Schedule</div>
+    <div class="topright">
+      <div class="pill"><span class="live"></span><span id="todayLabel">SEMESTER GASAL</span></div>
+      <button class="icon-btn" id="themeToggle" aria-label="เปลี่ยนธีม" title="เปลี่ยนธีม">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.6 8.6 0 1 0 20.5 14.2Z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Your week, designed</div>
+      <h1>Jadwal<span>Kuliah</span></h1>
+      <p class="meta"><strong>Semester Gasal</strong><br>Universitas Nahdlatul Ulama Yogyakarta<br>HAIKA AWAE <span style="color:var(--red)">·</span> 245551084</p>
+    </div>
+    <aside class="hero-card">
+      <div class="hero-card-top"><span>Academic load</span><span>2026 / 2027</span></div>
+      <div>
+        <div class="hero-total">20<em>SKS</em></div>
+        <div class="hero-note"><span><strong>09 mata kuliah</strong><br>Dalam satu semester</span><span style="text-align:right">SEMANGAT<br>DALAM PERKULIAHAN ↗</span></div>
+      </div>
+    </aside>
   </header>
-  <div class="body">
-    <div class="tabs" id="tabs" role="tablist"></div>
-    <section class="week" id="week" aria-label="ตารางรายสัปดาห์"></section>
-    <section class="list" id="list" aria-label="รายวัน"></section>
-  </div>
-  <footer class="foot">
-    <div class="big">20 SKS</div>
-    <div class="fm">Semangat dalam<br>Perkuliahan</div>
+
+  <main>
+    <div class="section-head">
+      <div><div class="section-kicker">Schedule / 01</div><h2>Ruang Kelas</h2></div>
+      <div class="view-note">Pilih hari untuk melihat detail<br>atau buka ringkasan mingguan.</div>
+    </div>
+    <div class="controls" id="tabs" role="tablist" aria-label="Pilih hari kuliah"></div>
+    <section id="dayView" class="day-view" aria-live="polite"></section>
+    <section id="weekView" class="week-wrap" aria-label="Ringkasan jadwal mingguan"><div id="weekGrid" class="week-grid"></div></section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-mark">20 <span>SKS</span></div>
+    <div class="footer-right"><strong>Semangat dalam Perkuliahan.</strong>One class at a time. Keep moving forward.</div>
   </footer>
-</main>
+  <div class="smallprint"><span>UNU Yogyakarta · Semester Gasal</span><span>Designed for your daily routine ↗</span></div>
+</div>
 <script>
-var DAYS=[
+const DAYS=[
  {id:"Senin",th:"จันทร์",n:1},{id:"Selasa",th:"อังคาร",n:2},{id:"Rabu",th:"พุธ",n:3},
  {id:"Kamis",th:"พฤหัสบดี",n:4},{id:"Jumat",th:"ศุกร์",n:5}
 ];
-var COURSES=[
+const COURSES=[
  {d:"Senin",s:"10:00",e:"11:40",name:"Halal Lifestyle",code:"SII224",sks:2,lec:"Ahmad Hujaj Nurrohim, Lc., M.H."},
  {d:"Senin",s:"13:50",e:"15:30",name:"Ilmu Qiraat",code:"SII227",sks:2,lec:"Aminah, Lc., M.Ag."},
  {d:"Selasa",s:"07:30",e:"09:10",name:"Desain Visual Dakwah",code:"SII226",sks:2,lec:"Nuzulia Febri Hidayati, S.H.I., M.H"},
@@ -102,49 +157,36 @@ var COURSES=[
  {d:"Jumat",s:"13:00",e:"15:30",name:"Metodologi Penelitian",code:"SII122",sks:3,lec:"Dr. Nur Hidayah, Lc., M.A."},
  {d:"Jumat",s:"15:50",e:"17:30",name:"Psikologi dan Konseling Islam",code:"SII222",sks:2,lec:"Khairul Ihsan, S.S, M.Si. M.M."}
 ];
-function mins(t){var p=t.split(":");return +p[0]*60+ +p[1]}
-var START=7*60+30, today=new Date().getDay();
-
-var wk='<div class="days"><div></div>';
-DAYS.forEach(function(d){wk+='<div class="dh'+(d.n===today?' today':'')+'">'+d.id+'<small>'+d.th+'</small></div>';});
-wk+='<div class="axis">';
-for(var h=8;h<=17;h++){wk+='<span style="top:'+(h*60-START)+'px">'+(h<10?'0':'')+h+':00</span>';}
-wk+='</div>';
-DAYS.forEach(function(d){
-  var cs=COURSES.filter(function(c){return c.d===d.id});
-  wk+='<div class="col'+(cs.length?'':' empty')+'">';
-  cs.forEach(function(c){
-    wk+='<div class="ev" style="top:'+(mins(c.s)-START)+'px;height:'+(mins(c.e)-mins(c.s)-2)+'px"><b>'+c.name+'</b>'+c.s+'–'+c.e+'<br>'+c.code+' · '+c.sks+' SKS<br>'+c.lec+'</div>';
-  });
-  wk+='</div>';
-});
-wk+='</div>';
-document.getElementById('week').innerHTML=wk;
-
-var ls='';
-DAYS.forEach(function(d){
-  var cs=COURSES.filter(function(c){return c.d===d.id});
-  ls+='<div class="day" data-d="'+d.id+'"><h2>'+d.id+'<sup>'+d.th+(d.n===today?' · วันนี้':'')+'</sup></h2>';
-  if(!cs.length){ls+='<div class="free">ว่างทั้งวัน</div>';}
-  cs.forEach(function(c,i){
-    ls+='<div class="item"><span class="ix">'+(i+1)+'</span><div class="txt"><b>'+c.name+'</b><span>'+c.s+' – '+c.e+'</span><span>'+c.code+' · '+c.sks+' SKS</span><span class="lec">'+c.lec+'</span></div></div>';
-  });
-  ls+='</div>';
-});
-document.getElementById('list').innerHTML=ls;
-
-var tabsEl=document.getElementById('tabs');
-var tb='';
-DAYS.forEach(function(d){tb+='<button class="tab" role="tab" data-v="'+d.id+'">'+d.id+'</button>';});
-tb+='<button class="tab" role="tab" data-v="all">ทั้งสัปดาห์</button>';
-tabsEl.innerHTML=tb;
-function show(v){
-  document.body.setAttribute('data-view',v==='all'?'all':'day');
-  Array.prototype.forEach.call(tabsEl.children,function(b){b.setAttribute('aria-selected',b.getAttribute('data-v')===v?'true':'false');});
-  Array.prototype.forEach.call(document.querySelectorAll('.day'),function(el){el.classList.toggle('sel',el.getAttribute('data-d')===v);});
+const icons={
+ default:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5h16v13H4z"/><path d="M8 3v5m8-5v5M4 10h16M8 14h3m-3 2h6"/></svg>',
+ book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H20v17H7.5A3.5 3.5 0 0 0 4 22z"/><path d="M4 5.5v16.2M8 6h8m-8 4h7"/></svg>',
+ art:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 1.2-3.6 1.8 1.8 0 0 1 1.1-3.2H18A3 3 0 0 0 21 11.2 9 9 0 0 0 12 3Z"/><path d="M7.5 10h.1M10 6.8h.1M15 7.8h.1M17 11h.1"/></svg>',
+ chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10m5 10V4m5 16v-7m5 7V7"/><path d="M2 20h20"/></svg>'
+};
+function iconFor(c){if(/Desain Visual/i.test(c.name))return icons.art;if(/Statistik|Metodologi/i.test(c.name))return icons.chart;if(/Qiraat|Agama|Filantropi|Pendidikan|Psikologi/i.test(c.name))return icons.book;return icons.default}
+function courseCard(c,i){return `<article class="course" style="--i:${i}"><div class="time">${c.s}<small>TO ${c.e}</small></div><div class="course-main"><div class="course-title">${c.name}</div><div class="course-meta"><span class="tag">${c.code}</span><span>${c.sks} SKS</span></div><div class="lecturer">${c.lec}</div></div><div class="course-icon" aria-hidden="true">${iconFor(c)}</div></article>`}
+const tabs=document.getElementById('tabs'),dayView=document.getElementById('dayView'),weekView=document.getElementById('weekView'),weekGrid=document.getElementById('weekGrid');
+const nowDay=new Date().getDay();const todayId=nowDay>=1&&nowDay<=5?DAYS[nowDay-1].id:"Senin";
+document.getElementById('todayLabel').textContent=new Intl.DateTimeFormat('en',{weekday:'short',month:'short',day:'numeric'}).format(new Date()).toUpperCase();
+let currentView=todayId;
+function renderTabs(){
+ tabs.innerHTML=DAYS.map((d,i)=>`<button class="tab" role="tab" aria-selected="${currentView===d.id}" data-view="${d.id}"><span class="num">0${i+1}</span>${d.id}</button>`).join('')+
+ `<button class="tab week-tab" role="tab" aria-selected="${currentView==='all'}" data-view="all"><span class="num">↗</span>ทั้งสัปดาห์</button>`;
 }
-tabsEl.addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)show(b.getAttribute('data-v'));});
-show(today>=1&&today<=5?DAYS[today-1].id:'Senin');
+function renderDay(id){
+ const d=DAYS.find(x=>x.id===id),courses=COURSES.filter(c=>c.d===id);
+ dayView.innerHTML=`<div class="day-banner"><div class="day-name">${d.id}<small>${d.th}${d.id===todayId?' · วันนี้':''}</small></div><div class="day-count">${String(courses.length).padStart(2,'0')} CLASSES<br>${courses.reduce((n,c)=>n+c.sks,0)} SKS THIS DAY</div></div>`+
+ (courses.length?`<div class="course-list">${courses.map(courseCard).join('')}</div>`:`<div class="empty-state">${icons.default}<strong>วันนี้ไม่มีตารางเรียน</strong>ใช้เวลาว่างให้คุ้มค่า แล้วกลับมาอย่างเต็มพลัง</div>`);
+ dayView.style.display='block';weekView.style.display='none';
+}
+function renderWeek(){
+ weekGrid.innerHTML=DAYS.map(d=>{const cs=COURSES.filter(c=>c.d===d.id);return `<div class="week-day ${d.id===todayId?'is-today':''}"><div class="week-day-head"><strong>${d.id}</strong><small>${d.th} · ${cs.length} วิชา</small></div><div class="week-items">${cs.length?cs.map(c=>`<article class="week-course"><time>${c.s}–${c.e}</time><strong>${c.name}</strong><small>${c.code} · ${c.sks} SKS</small></article>`).join(''):'<div class="week-empty">ว่างทั้งวัน</div>'}</div></div>`}).join('');
+ dayView.style.display='none';weekView.style.display='block';
+}
+function show(view){currentView=view;renderTabs();if(view==='all')renderWeek();else renderDay(view)}
+tabs.addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(b)show(b.dataset.view)});
+document.getElementById('themeToggle').addEventListener('click',()=>{const root=document.documentElement;const next=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=next;document.querySelector('meta[name="theme-color"]').content=next==='dark'?'#101010':'#f3f0ed'});
+show(todayId);
 </script>
 </body>
 </html>
