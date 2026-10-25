@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ตารางเรียน – Semester Gasal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Inter:wght@400;500&family=Noto+Sans+Thai:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f1f0ee; --red:#d70f18; --faint:rgba(215,15,24,.28);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#141313;--red:#ff4a50;--faint:rgba(255,74,80,.32);color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#141313;--red:#ff4a50;--faint:rgba(255,74,80,.32);color-scheme:dark}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background-color:var(--bg);color:var(--red);
+  font-family:"Inter","Noto Sans Thai",system-ui,sans-serif;line-height:1.4;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 40px;display:grid;grid-template-columns:1fr;gap:22px}
+h1{font-family:"Inter Tight","Inter",sans-serif;font-weight:500;font-size:min(19vw,7rem);line-height:.88;letter-spacing:-.055em;margin:0}
+.meta{margin:16px 0 0;font-size:.85rem;max-width:30ch}
+.body{min-width:0}
+.tabs{display:flex;flex-wrap:wrap;margin:0 0 18px 1px}
+.tab{font:inherit;font-size:.8rem;font-weight:500;text-transform:uppercase;letter-spacing:.02em;color:var(--red);background:transparent;border:1px solid var(--red);margin:0 0 -1px -1px;padding:8px 13px;cursor:pointer;border-radius:0}
+.tab[aria-selected="true"]{background:var(--red);color:var(--bg)}
+.tab:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+
+.day{border-top:1px solid var(--red);padding:8px 0 16px}
+.day h2{margin:0 0 6px;font-family:"Inter Tight","Inter",sans-serif;font-weight:500;font-size:2.1rem;line-height:1.05;letter-spacing:-.04em;text-transform:uppercase}
+.day sup{font-family:"Inter","Noto Sans Thai",sans-serif;font-size:.8rem;font-weight:400;letter-spacing:0;text-transform:none;margin-left:3px;vertical-align:top;position:relative;top:.15em}
+.item{display:grid;grid-template-columns:22px 1fr;padding:8px 0}
+.ix{font-size:.6rem;padding-top:4px}
+.txt{display:flex;flex-direction:column;text-align:right;font-size:.95rem}
+.txt b{font-weight:500;font-size:1.1rem;line-height:1.25}
+.txt .lec{font-size:.8rem;opacity:.8}
+.free{text-align:right;padding:8px 0}
+
+.week{display:none}
+.days{display:grid;grid-template-columns:46px repeat(5,1fr);gap:0}
+.dh{padding:8px 6px;font-weight:500;text-transform:uppercase;font-size:.8rem;border-bottom:1px solid var(--red);border-top:1px solid var(--red)}
+.dh small{display:block;font-weight:400;font-size:.7rem;text-transform:none;opacity:.8}
+.dh.today{background:var(--red);color:var(--bg)}
+.axis{position:relative;height:600px}
+.axis span{position:absolute;left:0;font-size:.65rem;transform:translateY(-50%)}
+.col{position:relative;height:600px;border-left:1px solid var(--faint);background:repeating-linear-gradient(to bottom,transparent 0,transparent 59px,var(--faint) 59px,var(--faint) 60px)}
+.col.empty::after{content:"ว่างทั้งวัน";position:absolute;top:40%;left:0;right:0;text-align:center;font-size:.85rem}
+.ev{position:absolute;left:3px;right:3px;border:1px solid var(--red);background:var(--bg);padding:4px 6px;overflow:hidden;font-size:.7rem;line-height:1.3}
+.ev b{display:block;font-weight:500;font-size:.78rem}
+
+.foot{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-top:1px solid var(--red);padding-top:14px;margin-top:10px}
+.big{font-family:"Inter Tight","Inter",sans-serif;font-weight:500;font-size:min(22vw,8rem);line-height:.85;letter-spacing:-.055em}
+.fm{text-align:right;font-family:"Inter Tight","Inter",sans-serif;font-weight:500;font-size:clamp(1.1rem,4.5vw,1.6rem);line-height:1.1;letter-spacing:-.03em}
+
+body[data-view="day"] .day:not(.sel){display:none}
+@media (min-width:900px){
+  .wrap{grid-template-columns:5fr 7fr;column-gap:28px;padding-top:40px}
+  h1{font-size:6rem}
+  .foot{grid-column:1/-1}
+  body[data-view="all"] .body{grid-column:1/-1}
+  body[data-view="all"] .week{display:block}
+  body[data-view="all"] .list{display:none}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>JADWAL<br>KULIAH</h1>
+    <p class="meta">Semester Gasal<br>Universitas Nahdlatul Ulama Yogyakarta<br>HAIKA AWAE · 245551084</p>
+  </header>
+  <div class="body">
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <section class="week" id="week" aria-label="ตารางรายสัปดาห์"></section>
+    <section class="list" id="list" aria-label="รายวัน"></section>
+  </div>
+  <footer class="foot">
+    <div class="big">20 SKS</div>
+    <div class="fm">Semangat dalam<br>Perkuliahan</div>
+  </footer>
+</main>
+<script>
+var DAYS=[
+ {id:"Senin",th:"จันทร์",n:1},{id:"Selasa",th:"อังคาร",n:2},{id:"Rabu",th:"พุธ",n:3},
+ {id:"Kamis",th:"พฤหัสบดี",n:4},{id:"Jumat",th:"ศุกร์",n:5}
+];
+var COURSES=[
+ {d:"Senin",s:"10:00",e:"11:40",name:"Halal Lifestyle",code:"SII224",sks:2,lec:"Ahmad Hujaj Nurrohim, Lc., M.H."},
+ {d:"Senin",s:"13:50",e:"15:30",name:"Ilmu Qiraat",code:"SII227",sks:2,lec:"Aminah, Lc., M.Ag."},
+ {d:"Selasa",s:"07:30",e:"09:10",name:"Desain Visual Dakwah",code:"SII226",sks:2,lec:"Nuzulia Febri Hidayati, S.H.I., M.H"},
+ {d:"Selasa",s:"10:00",e:"12:30",name:"Agama Islam",code:"UNU101",sks:3,lec:"Nuzulia Febri Hidayati, S.H.I., M.H"},
+ {d:"Selasa",s:"15:50",e:"17:30",name:"Ilmu Pendidikan",code:"SII225",sks:2,lec:"Nasih Burhani, S.Pd.I., MA., Ph.D."},
+ {d:"Kamis",s:"11:40",e:"13:20",name:"Filantropi Islam",code:"SII223",sks:2,lec:"Jazilus Sakhok, M.A., Ph.D."},
+ {d:"Kamis",s:"15:50",e:"17:30",name:"Statistik",code:"SII231",sks:2,lec:"Nasih Burhani, S.Pd.I., MA., Ph.D."},
+ {d:"Jumat",s:"13:00",e:"15:30",name:"Metodologi Penelitian",code:"SII122",sks:3,lec:"Dr. Nur Hidayah, Lc., M.A."},
+ {d:"Jumat",s:"15:50",e:"17:30",name:"Psikologi dan Konseling Islam",code:"SII222",sks:2,lec:"Khairul Ihsan, S.S, M.Si. M.M."}
+];
+function mins(t){var p=t.split(":");return +p[0]*60+ +p[1]}
+var START=7*60+30, today=new Date().getDay();
+
+var wk='<div class="days"><div></div>';
+DAYS.forEach(function(d){wk+='<div class="dh'+(d.n===today?' today':'')+'">'+d.id+'<small>'+d.th+'</small></div>';});
+wk+='<div class="axis">';
+for(var h=8;h<=17;h++){wk+='<span style="top:'+(h*60-START)+'px">'+(h<10?'0':'')+h+':00</span>';}
+wk+='</div>';
+DAYS.forEach(function(d){
+  var cs=COURSES.filter(function(c){return c.d===d.id});
+  wk+='<div class="col'+(cs.length?'':' empty')+'">';
+  cs.forEach(function(c){
+    wk+='<div class="ev" style="top:'+(mins(c.s)-START)+'px;height:'+(mins(c.e)-mins(c.s)-2)+'px"><b>'+c.name+'</b>'+c.s+'–'+c.e+'<br>'+c.code+' · '+c.sks+' SKS<br>'+c.lec+'</div>';
+  });
+  wk+='</div>';
+});
+wk+='</div>';
+document.getElementById('week').innerHTML=wk;
+
+var ls='';
+DAYS.forEach(function(d){
+  var cs=COURSES.filter(function(c){return c.d===d.id});
+  ls+='<div class="day" data-d="'+d.id+'"><h2>'+d.id+'<sup>'+d.th+(d.n===today?' · วันนี้':'')+'</sup></h2>';
+  if(!cs.length){ls+='<div class="free">ว่างทั้งวัน</div>';}
+  cs.forEach(function(c,i){
+    ls+='<div class="item"><span class="ix">'+(i+1)+'</span><div class="txt"><b>'+c.name+'</b><span>'+c.s+' – '+c.e+'</span><span>'+c.code+' · '+c.sks+' SKS</span><span class="lec">'+c.lec+'</span></div></div>';
+  });
+  ls+='</div>';
+});
+document.getElementById('list').innerHTML=ls;
+
+var tabsEl=document.getElementById('tabs');
+var tb='';
+DAYS.forEach(function(d){tb+='<button class="tab" role="tab" data-v="'+d.id+'">'+d.id+'</button>';});
+tb+='<button class="tab" role="tab" data-v="all">ทั้งสัปดาห์</button>';
+tabsEl.innerHTML=tb;
+function show(v){
+  document.body.setAttribute('data-view',v==='all'?'all':'day');
+  Array.prototype.forEach.call(tabsEl.children,function(b){b.setAttribute('aria-selected',b.getAttribute('data-v')===v?'true':'false');});
+  Array.prototype.forEach.call(document.querySelectorAll('.day'),function(el){el.classList.toggle('sel',el.getAttribute('data-d')===v);});
+}
+tabsEl.addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)show(b.getAttribute('data-v'));});
+show(today>=1&&today<=5?DAYS[today-1].id:'Senin');
+</script>
+</body>
+</html>
