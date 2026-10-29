@@ -107,6 +107,28 @@ button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .tab.is-today:after{content:"";position:absolute;top:5px;right:8px;width:5px;height:5px;background:currentColor}
 .tab:active{opacity:.7}
 
+
+/* ---------- real-time clock + countdown (orange/black poster style) ---------- */
+.time-panel{border:1.5px solid var(--ink);padding:14px 14px 15px;margin:0 0 30px;position:relative;overflow:hidden;background:var(--bg)}
+.time-panel:after{content:"";position:absolute;right:-30px;top:30px;width:95px;height:95px;border:1px solid var(--ink);border-radius:50%;opacity:.14;pointer-events:none}
+.time-top{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.62rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.time-kicker{display:flex;align-items:center;gap:7px}
+.time-dot{width:7px;height:7px;background:var(--ink);display:inline-block;animation:blink 1.6s steps(2,jump-none) infinite}
+.clock-date{font-weight:600;letter-spacing:.04em;text-align:right;opacity:.8}
+.live-clock{font-size:clamp(2.7rem,13vw,4.4rem);font-weight:850;line-height:1;letter-spacing:-.065em;font-variant-numeric:tabular-nums;margin:12px 0 13px;white-space:nowrap}
+.time-rule{height:3px;background:var(--ink);width:100%;margin-bottom:12px}
+.countdown-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.countdown-copy{display:flex;flex-direction:column;min-width:0;gap:3px}
+.countdown-label,.countdown-caption{font-size:.58rem;font-weight:850;letter-spacing:.12em;text-transform:uppercase}
+.countdown-course{font-size:1rem;line-height:1.2;font-weight:850;overflow-wrap:anywhere}
+.countdown-meta{font-size:.68rem;line-height:1.4;opacity:.82}
+.countdown-box{text-align:right;flex:0 0 auto;max-width:48%}
+.countdown-value{display:block;font-size:clamp(1.2rem,5.6vw,1.8rem);font-weight:850;line-height:1.15;letter-spacing:-.04em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.time-panel.is-class-now{background:var(--ink);color:var(--bg);box-shadow:0 0 0 2px var(--glow),0 0 28px var(--glow-soft);animation:glow 2.4s ease-in-out infinite}
+.time-panel.is-class-now .time-rule{background:var(--bg)}
+.time-panel.is-class-now .time-dot{background:var(--bg)}
+@media(max-width:380px){.time-panel{padding:12px}.live-clock{font-size:2.7rem}.countdown-course{font-size:.9rem}.countdown-value{font-size:1.15rem}.countdown-row{gap:8px}}
+
 /* ---------- keyframes ---------- */
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
@@ -129,6 +151,17 @@ button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.6 8.6 0 1 0 20.5 14.2Z"/></svg>
     </button>
   </nav>
+
+  <!-- ---------- real-time clock + class countdown ---------- -->
+  <section class="time-panel" aria-label="นาฬิกาและนับถอยหลังตารางเรียน">
+    <div class="time-top"><span class="time-kicker"><i class="time-dot"></i> LOCAL TIME</span><span id="clockDate" class="clock-date">กำลังโหลดวันที่…</span></div>
+    <div id="liveClock" class="live-clock" aria-live="off">00:00:00</div>
+    <div class="time-rule"></div>
+    <div class="countdown-row">
+      <div class="countdown-copy"><span id="countdownLabel" class="countdown-label">NEXT CLASS</span><strong id="countdownCourse" class="countdown-course">กำลังตรวจสอบตารางเรียน…</strong><span id="countdownMeta" class="countdown-meta">Jadwal Kuliah</span></div>
+      <div class="countdown-box"><span id="countdownCaption" class="countdown-caption">COUNTDOWN</span><strong id="countdownValue" class="countdown-value">--:--:--</strong></div>
+    </div>
+  </section>
 
   <header class="row head">
     <div class="when"><span>26</span><span>27</span></div>
@@ -221,6 +254,57 @@ function updateLive(){
  });
 }
 
+
+/* ---------- real-time clock + countdown to the next class ---------- */
+const pad2=n=>String(n).padStart(2,'0');
+const clockDate=document.getElementById('clockDate');
+const liveClock=document.getElementById('liveClock');
+const countdownLabel=document.getElementById('countdownLabel');
+const countdownCourse=document.getElementById('countdownCourse');
+const countdownMeta=document.getElementById('countdownMeta');
+const countdownCaption=document.getElementById('countdownCaption');
+const countdownValue=document.getElementById('countdownValue');
+const timePanel=document.querySelector('.time-panel');
+function formatRemaining(ms){
+ const sec=Math.max(0,Math.floor(ms/1000));
+ const days=Math.floor(sec/86400),hours=Math.floor((sec%86400)/3600),mins=Math.floor((sec%3600)/60),secs=sec%60;
+ return days>0?`${days}d ${pad2(hours)}:${pad2(mins)}:${pad2(secs)}`:`${pad2(hours)}:${pad2(mins)}:${pad2(secs)}`;
+}
+function updateClockAndCountdown(){
+ const now=new Date();
+ liveClock.textContent=`${pad2(now.getHours())}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}`;
+ clockDate.textContent=new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).format(now);
+ const dow=now.getDay(),today=dow>=1&&dow<=5?DAYS[dow-1].id:null;
+ const minute=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+ const todayCourses=today?COURSES.filter(c=>c.d===today).sort((a,b)=>toMin(a.s)-toMin(b.s)):[];
+ const active=todayCourses.find(c=>minute>=toMin(c.s)&&minute<toMin(c.e));
+ let target=null,mode='next';
+ if(active){
+   target={course:active,at:new Date(now.getFullYear(),now.getMonth(),now.getDate(),...active.e.split(':').map(Number)),mode:'class'};
+ }else{
+   const nextToday=todayCourses.find(c=>toMin(c.s)>minute);
+   if(nextToday){target={course:nextToday,at:new Date(now.getFullYear(),now.getMonth(),now.getDate(),...nextToday.s.split(':').map(Number)),mode:'next'};}
+   else{
+     for(let offset=1;offset<=7&&!target;offset++){
+       const date=new Date(now.getFullYear(),now.getMonth(),now.getDate()+offset);
+       const dayId=date.getDay()>=1&&date.getDay()<=5?DAYS[date.getDay()-1].id:null;
+       if(!dayId)continue;
+       const next=COURSES.filter(c=>c.d===dayId).sort((a,b)=>toMin(a.s)-toMin(b.s))[0];
+       if(next)target={course:next,at:new Date(date.getFullYear(),date.getMonth(),date.getDate(),...next.s.split(':').map(Number)),mode:'next'};
+     }
+   }
+ }
+ timePanel.classList.toggle('is-class-now',!!active);
+ if(!target){countdownLabel.textContent='JADWAL';countdownCourse.textContent='ไม่พบตารางเรียน';countdownMeta.textContent='ตรวจสอบข้อมูลวิชาในตาราง';countdownCaption.textContent='COUNTDOWN';countdownValue.textContent='--:--:--';return;}
+ const c=target.course;
+ countdownLabel.textContent=target.mode==='class'?'CLASS IN PROGRESS':'NEXT CLASS';
+ countdownCourse.textContent=c.name;
+ const dayText=target.mode==='class'?'กำลังเรียนอยู่':new Intl.DateTimeFormat('th-TH',{weekday:'short',day:'numeric',month:'short'}).format(target.at);
+ countdownMeta.textContent=`${dayText} · ${fmt(c.s)}–${fmt(c.e)} · ${c.code}`;
+ countdownCaption.textContent=target.mode==='class'?'TIME LEFT':'STARTS IN';
+ countdownValue.textContent=formatRemaining(target.at-now);
+}
+
 function show(view){currentView=view;renderTabs();if(view==='all')renderWeek();else renderDay(view);updateLive()}
 tabs.addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(b)show(b.dataset.view)});
 
@@ -233,7 +317,9 @@ document.getElementById('themeToggle').addEventListener('click',()=>{
 });
 
 show(currentView);
+updateClockAndCountdown();
 setInterval(updateLive,15000);
+setInterval(updateClockAndCountdown,1000);
 </script>
 </body>
 </html>
